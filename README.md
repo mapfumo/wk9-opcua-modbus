@@ -2,9 +2,12 @@
 
 Embedded Modbus TCP slaves on STM32F446RE with W5500 Ethernet modules.
 
+![Project Image](image.png)
+
 ## Hardware Configuration
 
 ### Board 1
+
 - **MCU**: STM32 NUCLEO-F446RE
 - **Ethernet**: W5500 SPI module
 - **IP Address**: 10.10.10.100:502 (static)
@@ -12,6 +15,7 @@ Embedded Modbus TCP slaves on STM32F446RE with W5500 Ethernet modules.
 - **Display**: SSD1306 OLED 128x64 (I2C)
 
 ### Board 2
+
 - **MCU**: STM32 NUCLEO-F446RE
 - **Ethernet**: W5500 SPI module
 - **IP Address**: 10.10.10.200:502 (static)
@@ -48,13 +52,13 @@ Embedded Modbus TCP slaves on STM32F446RE with W5500 Ethernet modules.
 
 ## Modbus Register Map
 
-| Address      | Type            | Size | Description                      |
-|--------------|-----------------|------|----------------------------------|
-| 40001-40002  | Holding (FC03)  | f32  | Temperature (°C)                 |
-| 40003-40004  | Holding (FC03)  | f32  | Humidity (%RH)                   |
-| 40005        | Holding (FC03)  | u16  | Device Status (0=OK, 1=Error)    |
-| 40006-40007  | Holding (FC03)  | u32  | Uptime (seconds)                 |
-| 40008-40010  | Holding (FC03)  | u16  | Reserved                         |
+| Address     | Type           | Size | Description                   |
+| ----------- | -------------- | ---- | ----------------------------- |
+| 40001-40002 | Holding (FC03) | f32  | Temperature (°C)              |
+| 40003-40004 | Holding (FC03) | f32  | Humidity (%RH)                |
+| 40005       | Holding (FC03) | u16  | Device Status (0=OK, 1=Error) |
+| 40006-40007 | Holding (FC03) | u32  | Uptime (seconds)              |
+| 40008-40010 | Holding (FC03) | u16  | Reserved                      |
 
 **Note**: Modbus uses 1-based addressing. Register 40001 = address 0 in protocol.
 
@@ -87,11 +91,13 @@ wk9-opcua-modbus/
 ## Building
 
 Build for Board 1:
+
 ```bash
 cargo build --release --bin modbus_1
 ```
 
 Build for Board 2:
+
 ```bash
 cargo build --release --bin modbus_2
 ```
@@ -99,11 +105,13 @@ cargo build --release --bin modbus_2
 ## Flashing
 
 Flash to Board 1:
+
 ```bash
 probe-rs run --chip STM32F446RETx target/thumbv7em-none-eabihf/release/modbus_1
 ```
 
 Flash to Board 2:
+
 ```bash
 probe-rs run --chip STM32F446RETx target/thumbv7em-none-eabihf/release/modbus_2
 ```
@@ -113,16 +121,19 @@ probe-rs run --chip STM32F446RETx target/thumbv7em-none-eabihf/release/modbus_2
 ### Network Connectivity
 
 Ping Board 1:
+
 ```bash
 ping 10.10.10.100
 ```
 
 Ping Board 2:
+
 ```bash
 ping 10.10.10.200
 ```
 
 TCP connection test:
+
 ```bash
 nc 10.10.10.100 502
 ```
@@ -130,6 +141,7 @@ nc 10.10.10.100 502
 ### Modbus Queries
 
 Read temperature and humidity (FC03 - Read Holding Registers):
+
 ```bash
 # Board 1
 mbpoll -t 4 -r 1 -c 5 10.10.10.100
@@ -139,6 +151,7 @@ mbpoll -t 4 -r 1 -c 5 10.10.10.200
 ```
 
 Read specific registers:
+
 ```bash
 # Temperature only (registers 40001-40002)
 mbpoll -t 4 -r 1 -c 2 10.10.10.100
@@ -152,6 +165,7 @@ mbpoll -t 4 -r 3 -c 2 10.10.10.100
 The OLED (128x64) displays real-time status, updating every 2 seconds:
 
 **Startup Screen:**
+
 ```
 MODBUS_1
 IP: 10.10.10.100
@@ -159,6 +173,7 @@ Initializing...
 ```
 
 **Running Screen:**
+
 ```
 MODBUS_1
 10.10.10.100:502
@@ -173,33 +188,35 @@ When a Modbus client connects, the status changes to "CONNECTED".
 
 ### W5500 Ethernet Module (SPI)
 
-| W5500 Pin | F446RE Pin | Connector  | Function    |
-|-----------|------------|------------|-------------|
-| MOSI      | PA7        | Morpho CN7 | SPI1_MOSI   |
-| MISO      | PA6        | Morpho CN7 | SPI1_MISO   |
-| SCK       | PA5        | Morpho CN7 | SPI1_SCK    |
-| CS        | PB6        | Morpho CN7 | GPIO_OUT    |
-| RST       | PC7        | Morpho CN5 | GPIO_OUT    |
-| GND       | GND        | GND        | Ground      |
-| VCC       | 3V3        | 3V3        | Power       |
+| W5500 Pin | F446RE Pin | Connector  | Function  |
+| --------- | ---------- | ---------- | --------- |
+| MOSI      | PA7        | Morpho CN7 | SPI1_MOSI |
+| MISO      | PA6        | Morpho CN7 | SPI1_MISO |
+| SCK       | PA5        | Morpho CN7 | SPI1_SCK  |
+| CS        | PB6        | Morpho CN7 | GPIO_OUT  |
+| RST       | PC7        | Morpho CN5 | GPIO_OUT  |
+| GND       | GND        | GND        | Ground    |
+| VCC       | 3V3        | 3V3        | Power     |
 
 **Note**: Using Morpho connector SPI1 default pins (PA5/PA6/PA7). Verified working with modbus_example.
 
 ### SHT3x Sensor (I2C)
-| SHT3x Pin | F446RE Pin | Function    |
-|-----------|------------|-------------|
-| SDA       | PB9        | I2C1_SDA    |
-| SCL       | PB8        | I2C1_SCL    |
-| GND       | GND        | Ground      |
-| VDD       | 3V3        | Power       |
+
+| SHT3x Pin | F446RE Pin | Function |
+| --------- | ---------- | -------- |
+| SDA       | PB9        | I2C1_SDA |
+| SCL       | PB8        | I2C1_SCL |
+| GND       | GND        | Ground   |
+| VDD       | 3V3        | Power    |
 
 ### SSD1306 OLED (I2C - Shared Bus)
-| OLED Pin  | F446RE Pin | Function    |
-|-----------|------------|-------------|
-| SDA       | PB9        | I2C1_SDA    |
-| SCL       | PB8        | I2C1_SCL    |
-| GND       | GND        | Ground      |
-| VCC       | 3V3        | Power       |
+
+| OLED Pin | F446RE Pin | Function |
+| -------- | ---------- | -------- |
+| SDA      | PB9        | I2C1_SDA |
+| SCL      | PB8        | I2C1_SCL |
+| GND      | GND        | Ground   |
+| VCC      | 3V3        | Power    |
 
 **Note**: SHT3x and SSD1306 share the same I2C bus (I2C1).
 
