@@ -135,12 +135,19 @@ Implemented robust socket handling:
 - Uptime: u32 big-endian (2 registers)
 - 0-based addressing internally, 1-based (40001+) in Modbus protocol
 
-## Day 2-3: OPC-UA Integration (Desktop)
-- [ ] Install open62541 or opcua crate
-- [ ] Create OPC-UA server on desktop
-- [ ] Poll both Modbus slaves (10.10.10.100, 10.10.10.200)
-- [ ] Expose OPC-UA variables for each sensor
-- [ ] Test OPC-UA client (UaExpert)
+## Day 2: OPC-UA Integration (Desktop) - ✅ COMPLETE
+- [x] Install Python OPC-UA libraries (asyncua, pymodbus)
+- [x] Create OPC-UA to Modbus TCP gateway server
+- [x] Poll MODBUS_1 (10.10.10.100) successfully
+- [x] Expose OPC-UA variables for each sensor
+- [x] Create Python test client to verify OPC-UA data
+- [x] Document OPC-UA server setup in README.md
+- [x] Verify data: Temperature, Humidity, Status, Uptime
+- [x] Flash Board 2 (MODBUS_2) for dual-device testing
+- [x] Fix Board 2 firmware (was incomplete stub)
+- [x] Verify dual-board polling (both boards CONNECTED)
+- [x] Create test_both_boards.py client
+- [ ] Test with UaExpert professional OPC-UA client
 
 ## Stretch Goals
 - [ ] Add Modbus FC06 (Write Single Register) support

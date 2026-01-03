@@ -229,13 +229,73 @@ When a Modbus client connects, the status changes to "CONNECTED".
 - **Modbus Port**: 502 (standard)
 - **No DHCP**: Static IP configuration only
 
-## Next Steps (Day 2-3)
+## OPC-UA Gateway Server (Day 2)
 
-1. Install OPC-UA server on desktop
-2. Configure OPC-UA to poll both Modbus slaves
-3. Map Modbus registers to OPC-UA variables
-4. Test OPC-UA client (UaExpert)
-5. Integrate with Phase 3 architecture
+The OPC-UA gateway server polls both Modbus TCP devices and exposes their data via OPC-UA protocol.
+
+### Installation
+
+```bash
+pip3 install asyncua pymodbus --break-system-packages
+```
+
+### Running the Gateway
+
+Start the OPC-UA to Modbus TCP gateway:
+
+```bash
+python3 opcua_modbus_gateway.py
+```
+
+The server runs on `opc.tcp://0.0.0.0:4840/freeopcua/server/` and polls both Modbus devices every 2 seconds.
+
+### Testing with Python Client
+
+```bash
+python3 test_opcua_client.py
+```
+
+Example output:
+
+```
+=== MODBUS_1 Current Values ===
+Temperature: 30.3°C
+Humidity: 58.7%
+Device Status: 0
+Uptime: 3329s
+Connection Status: CONNECTED
+```
+
+### OPC-UA Namespace Structure
+
+```
+ModbusDevices/
+├── MODBUS_1/
+│   ├── Temperature (Float)
+│   ├── Humidity (Float)
+│   ├── DeviceStatus (UInt16)
+│   ├── Uptime (UInt32)
+│   └── ConnectionStatus (String)
+└── MODBUS_2/
+    ├── Temperature (Float)
+    ├── Humidity (Float)
+    ├── DeviceStatus (UInt16)
+    ├── Uptime (UInt32)
+    └── ConnectionStatus (String)
+```
+
+### Testing with UaExpert
+
+1. Download and install [UaExpert](https://www.unified-automation.com/products/development-tools/uaexpert.html)
+2. Add Server: `opc.tcp://<desktop-ip>:4840/freeopcua/server/`
+3. Connect and browse to ModbusDevices → MODBUS_1
+4. Drag variables to Data Access View for live monitoring
+
+### Next Steps
+
+- Flash Board 2 (MODBUS_2) to test dual-device polling
+- Integrate with Phase 3 monitoring architecture
+- Add data logging and historical trends
 
 ## References
 
